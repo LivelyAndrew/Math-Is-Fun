@@ -44,7 +44,7 @@ public class Main {
     String username = scanner.next();
 
     System.out.print("Enter password: ");
-    String password = scanner.next();
+    String password = encryptPassword(scanner.next());
 
     if (!Login.authenticateUser(username, password)) {
       System.out.println("Invalid username or password.");
