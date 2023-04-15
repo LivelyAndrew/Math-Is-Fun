@@ -10,11 +10,11 @@ import org.json.simple.parser.ParseException;
 public class User {
   private static final String FILE_NAME = "db.json";
 
-  public static void inputUser(
+  public static void inputUser(                   //database
       String username, String password, String email, String firstName, String lastName) {
     int id = getNextId();
 
-    JSONObject newUser = new JSONObject();
+    JSONObject newUser = new JSONObject();   //user object
     newUser.put("id", id);
     newUser.put("username", username);
     newUser.put("password", password);
@@ -22,14 +22,14 @@ public class User {
     newUser.put("firstName", firstName);
     newUser.put("lastName", lastName);
 
-    JSONArray users = readUsersFromFile();
+    JSONArray users = readUsersFromFile();      //database
     users.add(newUser);
     writeUsersToFile(users);
 
     System.out.println(firstName + " added successfully.");
   }
 
-  public static JSONObject searchUserById(int id) {
+  public static JSONObject searchUserById(int id) { //database
     JSONArray users = readUsersFromFile();
     JSONObject searchedUserObj = new JSONObject();
 
@@ -45,22 +45,12 @@ public class User {
     return null;
   }
 
-  private static int getNextId() {
+  private static int getNextId() {              //database
     JSONArray users = readUsersFromFile();
-    int maxId = 0;
-
-    for (Object userObj : users) {
-      JSONObject user = (JSONObject) userObj;
-      int userId = ((Long) user.get("id")).intValue();
-      if (userId > maxId) {
-        maxId = userId;
-      }
-    }
-
-    return maxId + 1;
+    return users.length()+1;  //i can't get the json stuff to work on my computer but i think this does the same thing.
   }
 
-  public static JSONArray readUsersFromFile() {
+  public static JSONArray readUsersFromFile() { //database
     JSONParser parser = new JSONParser();
     JSONArray users;
 
@@ -81,7 +71,7 @@ public class User {
     return users;
   }
 
-  private static void writeUsersToFile(JSONArray users) {
+  private static void writeUsersToFile(JSONArray users) { //database
     try (FileWriter file = new FileWriter(FILE_NAME)) {
       for (Object userObj : users) {
         JSONObject user = (JSONObject) userObj;
@@ -93,7 +83,7 @@ public class User {
     }
   }
 
-  public static void printSearchedUser(int id) {
+  public static void printSearchedUser(int id) { //database
     JSONObject user = searchUserById(id);
     if (user != null) {
       print(user);
@@ -102,38 +92,37 @@ public class User {
     }
   }
 
-  public static void printAllUsers() {
+  public static void printAllUsers() { //database
     JSONArray users = readUsersFromFile();
     print(users);
   }
 
-  private static void print(JSONObject user) {
+  private static void print(JSONObject user) { //user
     JSONArray users = new JSONArray();
     users.add(user);
     print(users);
   }
 
-  private static void print(JSONArray users) {
-    System.out.println(
-        "+----+------------------------------+---------------+---------------+-----------------+----------------------------------+");
-    System.out.println(
-        "| ID | Email                        | First Name    | Last Name     | Username        |"
-            + " Encrypted Password               |");
-    System.out.println(
-        "+----+------------------------------+---------------+---------------+-----------------+----------------------------------+");
-    for (Object userObj : users) {
+  private static void print(JSONArray users) { //database
+    System.out.println("""
+          +----+-------+-----------------------------+---------------+---------------+-----------------+----------------------------------+
+          | ID | Level | Email                       | First Name    | Last Name     | Username        |Encrypted Password                |
+          +----+-------+-----------------------------+---------------+---------------+-----------------+----------------------------------+
+                       """);
+    for (Object userObj : users) { // seems like an extra step, is this not possible?-> for(JSONObject user: users) {
       JSONObject user = (JSONObject) userObj;
       int id = ((Long) user.get("id")).intValue();
+      String level = (String) user.get("level";
       String email = (String) user.get("email");
       String firstName = (String) user.get("firstName");
       String lastName = (String) user.get("lastName");
       String username = (String) user.get("username");
       String encryptedPassword = (String) user.get("password");
       System.out.printf(
-          "| %-2d | %-28s | %-13s | %-13s | %-15s | %-32s |\n",
-          id, email, firstName, lastName, username, encryptedPassword);
+          "| %-2d | %-2d | %-15s | %-2s | %-13s | %-13s | %-15s | %-32s |\n",
+             id, level, email, firstName, lastName, username, encryptedPassword);
     }
     System.out.println(
-        "+----+------------------------------+---------------+---------------+-----------------+----------------------------------+");
+        "+----+-------+-----------------------------+---------------+---------------+-----------------+----------------------------------+");
   }
 }
