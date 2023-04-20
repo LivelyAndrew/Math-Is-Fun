@@ -13,18 +13,19 @@ public class Main {
     JSONObject user;
 
     do {
-      System.out.println("1. Login");
-      System.out.println("2. Add user");
-      System.out.println("3. Search user by ID");
-      System.out.println("4. Print all users");
-      System.out.println("9. Exit");
-      System.out.print("Enter your choice: ");
+      System.out.println("""1. Login");
+     2. Add user
+     3. Search user by ID
+     4. Print all users
+     5. Exit
+     Enter your choice: """
       choice = scanner.nextInt();
 
       switch (choice) {
         case 1:
-          User currentUser = login(scanner);
-          loggedIn(scanner, currentUser);
+          login(scanner);
+          Game.start();
+
           break;
         case 2:
           addUser(scanner);
@@ -59,7 +60,7 @@ public class Main {
     String username = scanner.next();
 
     System.out.print("Enter password: ");
-    String password = scanner.next();
+    String password = encryptPassword(scanner.next());
 
     User user = Login.authenticateUser(username, password);
     if (user.getId() == -1) {
@@ -156,6 +157,9 @@ public class Main {
   private static void addUser(Scanner scanner) {
     System.out.print("Enter email: ");
     String email = scanner.next();
+    
+    System.out.print("Enter gameLevel: ");
+    String level = scanner.next();
 
     System.out.print("Enter first name: ");
     String firstName = scanner.next();
@@ -169,9 +173,8 @@ public class Main {
     System.out.print("Enter password: ");
     String password = scanner.next();
 
-    int id = UserRepository.getNextId();
-    User newUser = new User(id, email, firstName, lastName, username, password);
-    Login.addUser(newUser);
+    Login.addUser(email, level, firstName, lastName, username, password);
+
   }
 
   /*
