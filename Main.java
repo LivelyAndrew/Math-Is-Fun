@@ -161,17 +161,23 @@ public class Main {
     System.out.print("Enter gameLevel: ");
     String level = scanner.next();
 
-    System.out.print("Enter first name: ");
-    String firstName = scanner.next();
+    private static void addUser(Scanner scanner) {
+        System.out.print("Enter email: ");
+        String email = scanner.next();
 
-    System.out.print("Enter last name: ");
-    String lastName = scanner.next();
+        int level = 0;
 
-    System.out.print("Enter username: ");
-    String username = scanner.next();
+        do {
+            System.out.print("Enter level(1-4): ");
+            while (!scanner.hasNextInt()) {
+                System.out.println("Please enter a number (1-4): ");
+                scanner.next();
+            }
+            level = scanner.nextInt();
+        } while (level > 4 || level < 1);
 
-    System.out.print("Enter password: ");
-    String password = scanner.next();
+        System.out.print("Enter first name: ");
+        String firstName = scanner.next();
 
     Login.addUser(email, level, firstName, lastName, username, password);
 

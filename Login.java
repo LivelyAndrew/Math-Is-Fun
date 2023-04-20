@@ -17,6 +17,7 @@ public class Login {
  */
   public static User authenticateUser(String username, String password) {
     String encryptedPassword = encryptPassword(password);
+=======
     JSONArray users = UserRepository.readUsersFromFile();
 
     for (Object userObj : users) {
@@ -30,6 +31,7 @@ public class Login {
 
     return null;
   }
+
 
 /*
  * @author Isaac
@@ -51,6 +53,7 @@ public class Login {
  *
  * @source https://www.javatpoint.com/how-to-encrypt-password-in-java
  */
+
   private static String encryptPassword(String password) {
     String encryptedPassword = null;
     try {
