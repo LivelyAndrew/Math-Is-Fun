@@ -30,29 +30,17 @@ public class User {
     this.password = password;
   }
 
-/*
- * @author Isaac
- *
- * @return id of the user
- */
+
   public int getId() {
     return id;
   }
 
-/*
- * @author Isaac
- *
- * @param id of the user
- */
+
   public void setId(int id) {
     this.id = id;
   }
 
-/*
- * @author Isaac
- *
- * @return email of the user
- */
+
   public String getEmail() {
     return email;
   }
@@ -65,6 +53,7 @@ public class User {
   public void setEmail(String email) {
     this.email = email;
   }
+
 
 /*
  * @author Isaac
