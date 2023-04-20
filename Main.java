@@ -1,7 +1,11 @@
+import java.util.ArrayList;
 import java.util.Scanner;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/*
+ * @author Isaac
+ * @author Natalie
+ */
 public class Main {
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
@@ -13,13 +17,14 @@ public class Main {
       System.out.println("2. Add user");
       System.out.println("3. Search user by ID");
       System.out.println("4. Print all users");
-      System.out.println("5. Exit");
+      System.out.println("9. Exit");
       System.out.print("Enter your choice: ");
       choice = scanner.nextInt();
 
       switch (choice) {
         case 1:
-          login(scanner);
+          User currentUser = login(scanner);
+          loggedIn(scanner, currentUser);
           break;
         case 2:
           addUser(scanner);
@@ -28,77 +33,126 @@ public class Main {
           searchUserById(scanner);
           break;
         case 4:
-          printAllUsers();
+          UserRepository.printAllUsers();
           break;
-        case 5:
+        case 9:
           System.out.println("Goodbye!");
+          scanner.close();
           break;
         default:
           System.out.println("Invalid choice. Please try again.");
       }
-    } while (choice != 5);
+    } while (choice != 9);
 
     scanner.close();
   }
 
-  private static void login(Scanner scanner) {
+  /*
+   * @author Isaac
+   *
+   * @param scanner - user input
+   *
+   * @return User - the user if they logged in
+   */
+  private static User login(Scanner scanner) {
     System.out.print("Enter username: ");
     String username = scanner.next();
 
     System.out.print("Enter password: ");
     String password = scanner.next();
 
-    int userId = Login.authenticateUser(username, password);
-    if (userId == -1) {
+    User user = Login.authenticateUser(username, password);
+    if (user.getId() == -1) {
       System.out.println("Invalid username or password.");
-      return;
-    }
-    JSONObject currentUser = null;
-    JSONArray users = User.readUsersFromFile();
-    for (Object userObj : users) {
-      JSONObject user = (JSONObject) userObj;
-      int id = ((Long) user.get("id")).intValue();
-      if (id == userId) {
-        String firstName = (String) user.get("firstName");
-        System.out.println("Login successful. Hello " + firstName);
-        currentUser = user;
-        break;
-      }
+      return null;
     }
 
+    User currentUser = UserRepository.searchUserById(user.getId());
     if (currentUser == null) {
       System.out.println("User not found.");
-      return;
+      return null;
     }
 
-    loggedIn(scanner, currentUser);
+    System.out.println("Login successful. Hello " + currentUser.getFirstName());
+    return currentUser;
   }
 
-  private static void loggedIn(Scanner scanner, JSONObject currentUser) {
+  /*
+   * @author Isaac
+   *
+   * @param scanner - user input
+   *
+   * @return
+   */
+  private static void loggedIn(Scanner scanner, User currentUser) {
     int loggedInChoice;
     do {
       System.out.println("1. View current user");
-      System.out.println("2. Do things (placeholder)");
-      System.out.println("3. Logout");
+      System.out.println("2. Play MathIsFun");
+      System.out.println("9. Logout");
       System.out.print("Enter your choice: ");
       loggedInChoice = scanner.nextInt();
 
       switch (loggedInChoice) {
         case 1:
-          User.printSearchedUser(((Long) currentUser.get("id")).intValue());
+          UserRepository.printSearchedUser(currentUser.getId());
           break;
         case 2:
-          System.out.println("Doing things (placeholder)..."); // Placeholder action
+          MathIsFun(scanner);
           break;
-        case 3:
+        case 9:
           System.out.println("Logging out...");
           break;
         default:
           System.out.println("Invalid choice. Please try again.");
       }
-    } while (loggedInChoice != 3);
+    } while (loggedInChoice != 9);
   }
 
+  /*
+   * @author Natalie
+   * @author Isaac
+   *
+   * @param scanner - user input
+   */
+  private static void MathIsFun(Scanner scanner) {
+    int playAgain = 1;
+    while (playAgain != 0) {
+      System.out.println(
+          "***********************************\n"
+              + "*				  *\n"
+              + "*    MATH IS FUN!                 *\n"
+              + "*                                 *\n"
+              + "***********************************");
+
+      System.out.println(
+          "Select a game below:\n"
+              + "1. Addition     2. Subtraction     3. Multiplication   4.Division");
+
+      switch (scanner.nextInt()) {
+        case 1: // addition
+          ArrayList<Double> grades = MathFunctions.Addition(scanner);
+          break;
+        case 2: // subtraction
+          ArrayList<Double> gradesSub = MathFunctions.Subtraction(scanner);
+          break;
+        case 3: // multiplication
+          MathFunctions.Multiplication(scanner);
+          break;
+        case 4: // division
+          break;
+      }
+      System.out.println("Would you like to play again?");
+      System.out.println("press 0 to quit, or 1 to continue");
+      playAgain = scanner.nextInt();
+    }
+  }
+
+  /*
+   * @author Isaac
+   *
+   * @param scanner - user input
+   */
   private static void addUser(Scanner scanner) {
     System.out.print("Enter email: ");
     String email = scanner.next();
@@ -115,16 +169,20 @@ public class Main {
     System.out.print("Enter password: ");
     String password = scanner.next();
 
-    Login.addUser(email, firstName, lastName, username, password);
+    int id = UserRepository.getNextId();
+    User newUser = new User(id, email, firstName, lastName, username, password);
+    Login.addUser(newUser);
   }
 
+  /*
+   * @author Isaac
+   *
+   * @param scanner - user input
+   *
+   */
   private static void searchUserById(Scanner scanner) {
     System.out.print("Enter user ID: ");
     int id = scanner.nextInt();
-    User.printSearchedUser(id);
-  }
-
-  private static void printAllUsers() {
-    User.printAllUsers();
+    UserRepository.printSearchedUser(id);
   }
 }
